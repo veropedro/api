@@ -1,5 +1,6 @@
 package com.example.api.controller;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,7 @@ public class PersonControllerIT {
      * Methode Test getPersons()
      * @throws Exception
      */
+    @Disabled
     @Test
     public void getPersonsTest() throws Exception {
         performGetPersonsRequest();

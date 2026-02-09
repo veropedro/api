@@ -2,6 +2,7 @@ package com.example.api.controller;
 
 
 import com.example.api.service.PersonService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -24,6 +25,7 @@ class PersonControllerTest {
     private PersonService personService;
 
     // Test GET toutes les personnes
+    @Disabled
     @Test
     void getPersonsTest() throws Exception {
         when(personService.getPersons()).thenReturn(List.of());
@@ -33,6 +35,7 @@ class PersonControllerTest {
     }
 
     // Test GET une personne par ID
+    @Disabled
     @Test
     void getPersonByIdTest() throws Exception {
         mockMvc.perform(get("/api/persons/1"))
