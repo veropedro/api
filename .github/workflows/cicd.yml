@@ -19,6 +19,11 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+                --default-authentication-plugin=mysql_native_password
+                --health-cmd="mysqladmin ping"
+                --health-interval=10s
+                --health-timeout=5s
+                --health-retries=3
 
     steps:
       - uses: actions/checkout@v4
@@ -56,3 +61,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=veropedro_api
+
+      - name: Charging artefact  # permet de charger un artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: target/*.jar
+          retention-days: 1
