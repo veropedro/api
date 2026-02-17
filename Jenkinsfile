@@ -35,7 +35,6 @@ pipeline {
             }
         }
 
-        // Génération rapport Test
         stage('Generate Allure Report') {
             steps {
                 bat 'mvn allure:report'
@@ -43,16 +42,12 @@ pipeline {
         }
     }
 
-    // En fin de pipeline
     post {
         always {
-            allure([[
-                includeProperties: false,
-                jdk: '',
-                properties: [],
+            allure([
                 reportBuildPolicy: 'ALWAYS',
                 results: [[path: 'target/allure-results']]
-            ]])
+            ])
         }
     }
 }
