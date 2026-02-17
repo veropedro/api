@@ -1,5 +1,19 @@
 pipeline {
     agent any
+
+    // variables d'environnement
+    environment {
+        registry = "veropedro/api"
+        registryCredential = 'DockerHubAccount'
+        dockerImage = ''
+    }
+
+    // outils déclarés dans Jenkins
+    tools {
+        maven 'maven'
+        jdk 'JDK21'
+    }
+
     stages {
         stage('Git Checkout') {
             steps {
@@ -17,6 +31,10 @@ pipeline {
             }
         }
 
-        
+        stage('Build Maven') {
+            steps {
+                bat 'mvn clean package'
+            }
+        }
     }
 }
