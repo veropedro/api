@@ -1,13 +1,18 @@
 pipeline {
     agent any
 
+    environment {
+        registry = "veropedro/api"
+        registryCredential = 'jenkins-token'    // ← changement ici
+        dockerImage = ''
+    }
+
     tools {
         maven 'Maven3'
         jdk 'JDK21'
     }
 
     stages {
-
         stage('Clean Workspace') {
             steps {
                 cleanWs()
@@ -16,9 +21,11 @@ pipeline {
 
         stage('Git Checkout') {
             steps {
-                git credentialsId: 'token_jenkins2',
-                    url: 'https://github.com/veropedro/api.git',
-                    branch: 'main'
+                script {
+                    git branch: 'main',
+                        credentialsId: 'token_jenkins2',
+                        url: 'https://github.com/veropedro/api.git'
+                }
             }
         }
 
@@ -37,7 +44,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def dockerImage = docker.build("veropedro/api:latest")
+                    dockerImage = docker.build("${registry}:latest", '-f Dockerfile .')
                 }
             }
         }
@@ -45,13 +52,8 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    def dockerImage = docker.build("veropedro/api:latest")
-
-                    docker.withRegistry(
-                        'https://index.docker.io/v1/',
-                        'token_jenkins2'
-                    ) {
-                        dockerImage.push()
+                    docker.withRegistry('', registryCredential) {
+                        docker.image("${registry}:latest").push()
                     }
                 }
             }
@@ -60,9 +62,10 @@ pipeline {
 
     post {
         always {
-            allure includeProperties: false,
-                   jdk: '',
-                   results: [[path: 'allure-results']]
+            allure([
+                reportBuildPolicy: 'ALWAYS',
+                results: [[path: 'target/allure-results']]
+            ])
         }
     }
 }
