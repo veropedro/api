@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'
+        maven 'Maven3'
         jdk 'JDK21'
     }
 
@@ -49,7 +49,7 @@ pipeline {
 
                     docker.withRegistry(
                         'https://index.docker.io/v1/',
-                        'token_jenkins2'   // ✅ MODIFICATION ICI
+                        'token_jenkins2'
                     ) {
                         dockerImage.push()
                     }
