@@ -1,20 +1,24 @@
 pipeline {
     agent any
 
-    // variables d'environnement
     environment {
         registry = "veropedro/api"
         registryCredential = 'DockerHubAccount'
         dockerImage = ''
     }
 
-    // outils déclarés dans Jenkins
     tools {
-        maven 'Maven3'
+        maven 'maven'
         jdk 'JDK21'
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
         stage('Git Checkout') {
             steps {
                 script {
@@ -22,12 +26,6 @@ pipeline {
                         credentialsId: 'token_jenkins2',
                         url: 'https://github.com/veropedro/api.git'
                 }
-            }
-        }
-
-        stage('Clean Workspace') {
-            steps {
-                cleanWs()
             }
         }
 
