@@ -40,6 +40,26 @@ pipeline {
                 bat 'mvn allure:report'
             }
         }
+
+        // Construction de l'image Docker à partir du Dockerfile
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build("${registry}:latest", '-f Dockerfile .')
+                }
+            }
+        }
+
+        // Push de l'image dans le DockerHub
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('', registryCredential) {
+                        docker.image("${registry}:latest").push()
+                    }
+                }
+            }
+        }
     }
 
     post {
