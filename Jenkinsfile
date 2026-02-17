@@ -10,7 +10,7 @@ pipeline {
 
     // outils déclarés dans Jenkins
     tools {
-        maven 'maven'
+        maven 'Maven3'
         jdk 'JDK21'
     }
 
