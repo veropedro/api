@@ -34,5 +34,25 @@ pipeline {
                 bat 'mvn clean package'
             }
         }
+
+        // Génération rapport Test
+        stage('Generate Allure Report') {
+            steps {
+                bat 'mvn allure:report'
+            }
+        }
+    }
+
+    // En fin de pipeline
+    post {
+        always {
+            allure([[
+                includeProperties: false,
+                jdk: '',
+                properties: [],
+                reportBuildPolicy: 'ALWAYS',
+                results: [[path: 'target/allure-results']]
+            ]])
+        }
     }
 }
