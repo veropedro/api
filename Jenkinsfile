@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         registry = "veropedro/api"
-        registryCredential = 'jenkins-token'    // ← changement ici
+        registryCredential = 'jenkins-token'
         dockerImage = ''
     }
 
@@ -55,6 +55,16 @@ pipeline {
                     docker.withRegistry('', registryCredential) {
                         docker.image("${registry}:latest").push()
                     }
+                }
+            }
+        }
+
+        // Déploiement du multi-conteneur avec docker compose
+        stage('Deploy Docker-compose') {
+            steps {
+                script {
+                    // Construit les services
+                    bat 'docker-compose up -d --build --force-recreate --remove-orphans'
                 }
             }
         }

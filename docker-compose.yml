@@ -16,7 +16,7 @@ services:
       retries: 5
 
   api:
-    build: .
+    image: veropedro/api:latest
     container_name: api-spring
     ports:
       - "9090:9090"
