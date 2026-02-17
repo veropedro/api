@@ -1,18 +1,13 @@
 pipeline {
     agent any
 
-    environment {
-        registry = "veropedro/api"
-        registryCredential = 'DockerHubAccount'
-        dockerImage = ''
-    }
-
     tools {
-        maven 'Maven3'
+        maven 'Maven'
         jdk 'JDK21'
     }
 
     stages {
+
         stage('Clean Workspace') {
             steps {
                 cleanWs()
@@ -21,11 +16,9 @@ pipeline {
 
         stage('Git Checkout') {
             steps {
-                script {
-                    git branch: 'main',
-                        credentialsId: 'token_jenkins2',
-                        url: 'https://github.com/veropedro/api.git'
-                }
+                git credentialsId: 'token_jenkins2',
+                    url: 'https://github.com/veropedro/api.git',
+                    branch: 'main'
             }
         }
 
@@ -41,21 +34,24 @@ pipeline {
             }
         }
 
-        // Construction de l'image Docker à partir du Dockerfile
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${registry}:latest", '-f Dockerfile .')
+                    def dockerImage = docker.build("veropedro/api:latest")
                 }
             }
         }
 
-        // Push de l'image dans le DockerHub
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('', registryCredential) {
-                        docker.image("${registry}:latest").push()
+                    def dockerImage = docker.build("veropedro/api:latest")
+
+                    docker.withRegistry(
+                        'https://index.docker.io/v1/',
+                        'token_jenkins2'   // ✅ MODIFICATION ICI
+                    ) {
+                        dockerImage.push()
                     }
                 }
             }
@@ -64,10 +60,9 @@ pipeline {
 
     post {
         always {
-            allure([
-                reportBuildPolicy: 'ALWAYS',
-                results: [[path: 'target/allure-results']]
-            ])
+            allure includeProperties: false,
+                   jdk: '',
+                   results: [[path: 'allure-results']]
         }
     }
 }
